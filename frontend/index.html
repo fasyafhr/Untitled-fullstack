@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waktu Sholat ICP Ninja</title>
+    <style>
+        /* Menggunakan font yang lebih modern */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Gradasi ungu yang diminta */
+            background: linear-gradient(135deg, #480048, #301934);
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .sholat-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .sholat-container h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            /* Miniatur Islam (Ka'bah) di sebelah judul */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sholat-container p {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        /* Styling input waktu */
+        .input-group input[type="time"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #301934;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            box-sizing: border-box;
+            /* Mengatur style ikon jam bawaan */
+            filter: invert(10%);
+        }
+
+        /* Tombol Cek */
+        .cek-button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #FFFFFF;
+            color: #480048;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cek-button:hover {
+            background: #f0e6f0;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Area Hasil */
+        #hasil-waktu {
+            margin-top: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            display: none; /* Disembunyikan dulu, muncul via JS */
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sholat-container">
+        <h1>🕋 Waktu Sholat Anda</h1>
+        <p>Masukkan jam (WIB) untuk wilayah Jabodetabek</p>
+
+        <div class="input-group">
+            <label for="time-input">Masukkan Waktu:</label>
+            <input type="time" id="time-input" name="time-input" required>
+        </div>
+
+        <button class="cek-button" onclick="cekWaktuSholat()">Cek Waktu 🌙</button>
+
+        <div id="hasil-waktu">
+            </div>
+    </div>
+
+    <script>
+        function cekWaktuSholat() {
+            // 1. Ambil nilai dari input
+            const timeInput = document.getElementById('time-input').value; // Hasilnya: "HH:mm"
+            const hasilDiv = document.getElementById('hasil-waktu');
+
+            // Cek jika input kosong
+            if (!timeInput) {
+                hasilDiv.innerText = "Silakan masukkan waktu terlebih dahulu.";
+                hasilDiv.style.display = 'block';
+                return;
+            }
+
+            // 2. Pisahkan jam dan menit
+            const parts = timeInput.split(':');
+            const jam = parseInt(parts[0]);
+            const menit = parseInt(parts[1]);
+
+            // 3. Ubah ke format angka yang mudah dibandingkan
+            // Contoh: 18:40 -> 1840. 05:00 -> 500
+            const T = (jam * 100) + menit;
+
+            let hasilTeks = "";
+
+            // 4. Logika IF-ELSE-IF sesuai aturan Anda
+            if (T >= 100 && T <= 300) { // 01:00 - 03:00
+                hasilTeks = "🕌 Waktu Sholat Tahajud (Sunnah)";
+            } else if (T >= 400 && T <= 500) { // 04:00 - 05:00
+                hasilTeks = "🌅 Waktu Sholat Subuh (Wajib)";
+            } else if (T >= 800 && T <= 1100) { // 08:00 - 11:00
+                hasilTeks = "☀️ Waktu Sholat Dhuha (Sunnah)";
+            } else if (T >= 1200 && T <= 1400) { // 12:00 - 14:00
+                hasilTeks = "🕋 Waktu Sholat Dzuhur (Wajib)";
+            } else if (T >= 1500 && T <= 1700) { // 15:00 - 17:00
+                hasilTeks = "🌇 Waktu Sholat Ashar (Wajib)";
+            } else if (T >= 1800 && T <= 1840) { // 18:00 - 18:40
+                hasilTeks = "🌆 Waktu Sholat Maghrib (Wajib)";
+            } else if (T >= 1900 && T <= 2359) { // 19:00 - 23:59
+                hasilTeks = "🌙 Waktu Sholat Isya (Wajib)";
+            } else {
+                // Semua waktu lain di luar rentang di atas
+                hasilTeks = "the time is invalid, try another✨";
+            }
+
+            // 5. Tampilkan hasil di div
+            hasilDiv.innerText = hasilTeks;
+            hasilDiv.style.display = 'block'; // Tampilkan area hasil
+        }
+    </script>
+
+</body>
+</html>
